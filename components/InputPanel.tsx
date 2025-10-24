@@ -38,13 +38,13 @@ const InputPanel: React.FC<InputPanelProps> = ({
   const loadingText = loadingState === LoadingState.GeneratingCaption ? 'Analyzing image...' : 'Generating feedback...';
   
   return (
-    <div className="border-t border-gray-800 pt-8">
+    <div className="border-t border-gray-200 dark:border-gray-800 pt-8 transition-colors duration-200">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-white tracking-tighter">Your Explanation</h2>
+        <h2 className="text-3xl font-bold text-black dark:text-white tracking-tighter">Your Explanation</h2>
         <button
           onClick={onGetStrategy}
           disabled={isFetchingStrategy || isLoading || !!strategy}
-          className="flex items-center px-4 py-2 text-sm text-gray-300 font-medium border border-gray-700 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center px-4 py-2 text-sm text-black dark:text-gray-300 font-medium border border-gray-300 dark:border-gray-700 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isFetchingStrategy ? (
             <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -67,25 +67,31 @@ const InputPanel: React.FC<InputPanelProps> = ({
           onChange={(e) => onExplanationChange(e.target.value)}
           placeholder="Describe the image here, or use the microphone..."
           disabled={isLoading || isListening}
-          className="w-full h-40 p-4 bg-gray-900 border border-gray-800 rounded-lg focus:ring-1 focus:ring-gray-600 focus:border-gray-600 transition-colors disabled:opacity-50 text-gray-300 placeholder-gray-600"
+          className="w-full h-40 p-4 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-800 rounded-lg focus:ring-0 focus:border-gray-300 dark:focus:border-gray-800 focus:outline-none focus:shadow-none disabled:opacity-50 text-black dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-600 transition-colors"
+          style={{
+            border: '2px solid',
+            borderRadius: '0.5rem',
+            outline: 'none',
+            boxShadow: 'none'
+          }}
         />
         <div className="absolute top-3 right-3 flex space-x-2">
            {!isListening ? (
              <button 
                onClick={startListening} 
                disabled={isLoading}
-               className="p-2 bg-gray-800 rounded-full hover:bg-gray-700 disabled:opacity-50 transition-colors" 
+               className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors" 
                aria-label="Start recording"
              >
-               <MicIcon className="w-5 h-5 text-gray-400" />
+               <MicIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
              </button>
            ) : (
              <button 
                onClick={stopListening} 
-               className="p-2 bg-red-900/50 rounded-full hover:bg-red-900/80 transition-colors animate-pulse" 
+               className="p-2 bg-red-100 dark:bg-red-900/50 rounded-full hover:bg-red-200 dark:hover:bg-red-900/80 transition-colors animate-pulse" 
                aria-label="Stop recording"
              >
-               <StopIcon className="w-5 h-5 text-red-400" />
+               <StopIcon className="w-5 h-5 text-red-500 dark:text-red-400" />
              </button>
            )}
         </div>
@@ -93,7 +99,7 @@ const InputPanel: React.FC<InputPanelProps> = ({
       <button
         onClick={onSubmit}
         disabled={isLoading || !explanation}
-        className="mt-6 w-full h-12 flex items-center justify-center px-6 bg-gray-800 text-white font-semibold rounded-full shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-75 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed transition-all"
+        className="mt-6 w-full h-12 flex items-center justify-center px-6 bg-black dark:bg-gray-800 text-white font-semibold rounded-full shadow-md hover:bg-gray-900 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 focus:ring-opacity-75 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:text-white/80 disabled:cursor-not-allowed transition-all"
       >
         {isLoading ? (
           <div className="flex items-center space-x-2">

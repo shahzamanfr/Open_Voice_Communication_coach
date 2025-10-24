@@ -1,9 +1,50 @@
-import { ImageDomain } from '../types';
+// Unsplash API service for domain-specific images
+const UNSPLASH_ACCESS_KEY = 'YOUR_UNSPLASH_ACCESS_KEY'; // You'll need to get this from Unsplash
 
-// Function to generate domain-specific images using a reliable service
-const generateDomainImages = (domainSlug: string, count: number = 25) => {
-  // Use a curated collection of domain-specific images with unique signatures
-  const domainImageCollections = {
+export interface UnsplashImage {
+  id: string;
+  urls: {
+    regular: string;
+    small: string;
+    thumb: string;
+  };
+  alt_description: string;
+  description: string;
+}
+
+export interface UnsplashSearchResponse {
+  results: UnsplashImage[];
+  total: number;
+  total_pages: number;
+}
+
+// Domain-specific search queries
+const DOMAIN_QUERIES = {
+  'professional-scenes': 'business office meeting corporate workplace presentation team boardroom conference handshake collaboration executive professional work',
+  'emotions-expression': 'portrait emotion expression face human feeling reaction mood smile laugh serious contemplative person people',
+  'nature-environment': 'nature landscape forest mountain ocean wildlife outdoor environment sunset sunrise trees water natural scenic',
+  'technology-innovation': 'technology innovation tech digital computer robot ai future lab data cyber modern science engineering',
+  'places-architecture': 'architecture building city landmark place urban design structure bridge tower monument construction architectural',
+  'art-creativity': 'art creative artist studio painting design craft imagination sculpture gallery workshop artistic',
+  'human-stories': 'family people relationship community life story human connection friends children elderly social personal',
+  'dream-fantasy': 'fantasy dream surreal magical neon aurora mystical ethereal cosmic space universe abstract artistic'
+};
+
+export async function fetchDomainImages(domainSlug: string, count: number = 25): Promise<UnsplashImage[]> {
+  const query = DOMAIN_QUERIES[domainSlug as keyof typeof DOMAIN_QUERIES] || 'abstract';
+  
+  try {
+    // For now, return a fallback solution using a reliable image service
+    return generateFallbackImages(domainSlug, count);
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    return generateFallbackImages(domainSlug, count);
+  }
+}
+
+// Fallback solution using a reliable image service
+function generateFallbackImages(domainSlug: string, count: number): UnsplashImage[] {
+  const domainImageIds = {
     'professional-scenes': [
       '1521737604893-d14cc237f11d', '1486406146926-c627a92ad1ab', '1522075469751-3a6694fb2f61',
       '1522252234503-e356532cafd5', '1504384308090-c894fdcc538d', '1488590528505-98d2b5aba04b',
@@ -94,7 +135,7 @@ const generateDomainImages = (domainSlug: string, count: number = 25) => {
     ]
   };
 
-  const imageIds = domainImageCollections[domainSlug as keyof typeof domainImageCollections] || domainImageCollections['professional-scenes'];
+  const imageIds = domainImageIds[domainSlug as keyof typeof domainImageIds] || domainImageIds['professional-scenes'];
   
   return Array.from({ length: count }, (_, i) => {
     const imageId = imageIds[i % imageIds.length];
@@ -104,83 +145,13 @@ const generateDomainImages = (domainSlug: string, count: number = 25) => {
     
     return {
       id: `${domainSlug}-image-${i + 1}`,
-      src: `https://images.unsplash.com/photo-${imageId}?auto=format&fit=crop&w=1600&h=1200&q=80&sig=${uniqueId}`,
-      alt: `Domain-specific ${domainSlug.replace('-', ' ')} image ${i + 1}`,
+      urls: {
+        regular: `https://images.unsplash.com/photo-${imageId}?auto=format&fit=crop&w=1600&h=1200&q=80&sig=${uniqueId}`,
+        small: `https://images.unsplash.com/photo-${imageId}?auto=format&fit=crop&w=400&h=300&q=80&sig=${uniqueId}`,
+        thumb: `https://images.unsplash.com/photo-${imageId}?auto=format&fit=crop&w=200&h=150&q=80&sig=${uniqueId}`
+      },
+      alt_description: `Domain-specific ${domainSlug.replace('-', ' ')} image ${i + 1}`,
+      description: `Dynamic ${domainSlug.replace('-', ' ')} image for communication practice`
     };
   });
-};
-
-export const imageDomains: ImageDomain[] = [
-  {
-    slug: 'professional-scenes',
-    emoji: '💼',
-    title: 'Professional Scenes',
-    description: 'Boardrooms, presentations, and collaborative workplace moments to sharpen formal communication.',
-    accentClass: 'domain-card-accent-azure',
-    imageAccentClass: 'domain-image-accent-azure',
-    images: generateDomainImages('professional-scenes', 25),
-  },
-  {
-    slug: 'emotions-expression',
-    emoji: '🎭',
-    title: 'Emotions & Expression',
-    description: 'Close-up human portraits capturing subtle emotions, reactions, and storytelling through expression.',
-    accentClass: 'domain-card-accent-blush',
-    imageAccentClass: 'domain-image-accent-blush',
-    images: generateDomainImages('emotions-expression', 25),
-  },
-  {
-    slug: 'nature-environment',
-    emoji: '🌿',
-    title: 'Nature & Environment',
-    description: 'Immersive outdoor scenes filled with landscapes, textures, and serene natural ambiance.',
-    accentClass: 'domain-card-accent-emerald',
-    imageAccentClass: 'domain-image-accent-emerald',
-    images: generateDomainImages('nature-environment', 25),
-  },
-  {
-    slug: 'technology-innovation',
-    emoji: '🚀',
-    title: 'Technology & Innovation',
-    description: 'Futuristic labs, hardware builds, and digital workspaces capturing modern innovation.',
-    accentClass: 'domain-card-accent-electric',
-    imageAccentClass: 'domain-image-accent-electric',
-    images: generateDomainImages('technology-innovation', 25),
-  },
-  {
-    slug: 'places-architecture',
-    emoji: '🏙',
-    title: 'Places & Architecture',
-    description: 'Cityscapes, cultural landmarks, and architectural marvels to inspire location-focused stories.',
-    accentClass: 'domain-card-accent-amber',
-    imageAccentClass: 'domain-image-accent-amber',
-    images: generateDomainImages('places-architecture', 25),
-  },
-  {
-    slug: 'art-creativity',
-    emoji: '🎨',
-    title: 'Art & Creativity',
-    description: 'Studios, craft sessions, and imaginative compositions that amplify creative storytelling.',
-    accentClass: 'domain-card-accent-magenta',
-    imageAccentClass: 'domain-image-accent-magenta',
-    images: generateDomainImages('art-creativity', 25),
-  },
-  {
-    slug: 'human-stories',
-    emoji: '👶',
-    title: 'Human Stories',
-    description: 'Personal narratives, everyday connections, and life moments filled with warmth and depth.',
-    accentClass: 'domain-card-accent-coral',
-    imageAccentClass: 'domain-image-accent-coral',
-    images: generateDomainImages('human-stories', 25),
-  },
-  {
-    slug: 'dream-fantasy',
-    emoji: '🌈',
-    title: 'Dream & Fantasy',
-    description: 'Surreal atmospheres, neon palettes, and ethereal worlds for imaginative storytelling.',
-    accentClass: 'domain-card-accent-violet',
-    imageAccentClass: 'domain-image-accent-violet',
-    images: generateDomainImages('dream-fantasy', 25),
-  },
-];
+}
