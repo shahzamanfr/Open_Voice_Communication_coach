@@ -1643,28 +1643,31 @@ export async function getGroupDiscussionResponse(
   if (isInitialResponse) {
     // Initial response - one agent starts the discussion
     const startingAgent = activeAgents[0];
-    const systemInstruction = `You are ${startingAgent.name}, a human participant in a group discussion. You have the personality of a "${startingAgent.personality}" - ${startingAgent.description}.
+    const systemInstruction = `You are ${startingAgent.name}, a professional participant in a group discussion. You have the personality of a "${startingAgent.personality}" - ${startingAgent.description}.
 
 **Discussion Topic:** ${topic}
 
 **Your Task:**
-Start the group discussion naturally as a real person would. Be human, conversational, and engaging.
+Start the discussion with 1-2 sentences. Be direct and authentic.
 
-**Human Discussion Style:**
-- Talk like a real person, not a robot
-- Use natural language and expressions
-- Be conversational and engaging
-- Use "I think" or "I believe" naturally
-- Sound like you're actually talking to other people
-- Can be passionate about your perspective
-- Use contractions (don't, can't, won't)
-- Be authentic to your personality type
+**Collaborative Style:**
+- Maximum 2 sentences
+- Be supportive and constructive
+- Share insights or ask helpful questions
+- Build on the topic positively
+- Sound like a helpful colleague
+
+**Your Professional Approach:**
+- ${startingAgent.personality === "Analytical Thinker" ? "Focus on data, logic, and evidence. Ask for specifics and challenge vague statements." : ""}
+- ${startingAgent.personality === "Creative Visionary" ? "Think outside the box, challenge assumptions, and propose innovative solutions." : ""}
+- ${startingAgent.personality === "Practical Realist" ? "Ground ideas in reality, focus on what actually works, and point out implementation challenges." : ""}
+- ${startingAgent.personality === "Social Connector" ? "Build on others' ideas, facilitate discussion, but don't hesitate to call out poor reasoning." : ""}
 
 **Your Personality:** ${startingAgent.personality}
 **Your Description:** ${startingAgent.description}
 
 **Output:**
-Just your natural opening contribution to start the discussion. Be human, not AI.`;
+Just your natural opening contribution to start the discussion. Be professional, authentic, and substantive.`;
 
     const response = await callWithRetry(
       ai,
@@ -1701,7 +1704,7 @@ Just your natural opening contribution to start the discussion. Be human, not AI
           .join("\n")
       : "";
 
-    const systemInstruction = `You are ${respondingAgent.name}, a human participant in a group discussion. You have the personality of a "${respondingAgent.personality}" - ${respondingAgent.description}.
+    const systemInstruction = `You are ${respondingAgent.name}, a professional participant in a group discussion. You have the personality of a "${respondingAgent.personality}" - ${respondingAgent.description}.
 
 **Discussion Topic:** ${topic}
 ${userContribution ? `**User's Latest Contribution:** ${userContribution}` : "**Context:** Continue the group discussion naturally"}
@@ -1712,29 +1715,29 @@ ${historyText}
 **Your Task:**
 ${
   userContribution
-    ? "Respond naturally to the user's contribution as a real person would. Build on their ideas, challenge them respectfully, or add new perspectives."
-    : "Continue the group discussion naturally. You can build on what others have said, introduce new ideas, ask questions, or challenge existing points. Be spontaneous and engaging."
+    ? "Respond with 1-2 sentences. Build on good points or offer helpful alternatives to weak ones."
+    : "Continue the discussion with 1-2 sentences. Be collaborative and constructive."
 }
 
-**Human Discussion Style:**
-- Talk like a real person, not a robot
-- Use natural language and expressions
-- Be conversational and engaging
-- Reference what others have said naturally
-- Use "I think" or "I believe" naturally
-- Sound like you're actually talking to other people
-- Can be passionate about your perspective
-- Use contractions (don't, can't, won't)
-- Be authentic to your personality type
-- Build on others' ideas or respectfully disagree
-- Sometimes ask questions to keep the discussion flowing
-- Occasionally challenge ideas to make it interesting
+**Collaborative Style:**
+- Maximum 2 sentences
+- Be supportive and constructive
+- Build on ideas: "That's interesting, and we could also..."
+- Offer alternatives: "Another way to look at it might be..."
+- Ask helpful questions
+- Sound like a supportive colleague
+
+**Your Style:**
+${respondingAgent.personality === "Analytical Thinker" ? "Share relevant data. Ask clarifying questions to help everyone understand better." : ""}
+${respondingAgent.personality === "Creative Visionary" ? "Suggest creative alternatives. Build on others' ideas with new possibilities." : ""}
+${respondingAgent.personality === "Practical Realist" ? "Share implementation insights. Help ground ideas in reality constructively." : ""}
+${respondingAgent.personality === "Social Connector" ? "Connect different viewpoints. Help facilitate productive collaboration." : ""}
 
 **Your Personality:** ${respondingAgent.personality}
 **Your Description:** ${respondingAgent.description}
 
 **Output:**
-Just your natural response to the discussion. Be human, not AI.`;
+Just 1-2 sentences. Be collaborative and helpful.`;
 
     const response = await callWithRetry(
       ai,
@@ -2855,55 +2858,55 @@ ${agentsText}
 **FULL DISCUSSION HISTORY:**
 ${discussionText}
 
-**GROUP DISCUSSION EVALUATION CATEGORIES (0-20 points each):**
+**PROFESSIONAL GROUP DISCUSSION EVALUATION CATEGORIES (0-20 points each):**
 
 1. **Participation & Engagement (0-20):**
    - 0: No participation or completely irrelevant
    - 1-3: One word, no context, irrelevant to topic
    - 4-7: Minimal participation, barely contributes
    - 8-12: Basic participation, some contributions
-   - 13-16: Active participation, meaningful contributions
-   - 17-20: Exceptional participation, drives discussion
+   - 13-16: Active participation, meaningful professional contributions
+   - 17-20: Exceptional participation, drives discussion with expertise
 
 2. **Communication Clarity (0-20):**
    - 0: Incomprehensible or no communication
    - 1-3: Unclear, confusing, irrelevant
-   - 4-7: Basic clarity but weak expression
+   - 4-7: Basic clarity but weak professional expression
    - 8-12: Clear enough to understand
-   - 13-16: Clear and well-expressed
-   - 17-20: Crystal clear, perfectly articulated
+   - 13-16: Clear and professionally expressed
+   - 17-20: Crystal clear, expertly articulated
 
 3. **Leadership & Initiative (0-20):**
    - 0: No initiative whatsoever
    - 1-3: Completely passive, no leadership
    - 4-7: Minimal initiative
    - 8-12: Some initiative shown
-   - 13-16: Good leadership when needed
-   - 17-20: Strong leadership throughout
+   - 13-16: Good professional leadership when needed
+   - 17-20: Strong executive leadership throughout
 
-4. **Active Listening (0-20):**
+4. **Active Listening & Response Quality (0-20):**
    - 0: Completely ignores others
-   - 1-3: No acknowledgment of others
-   - 4-7: Minimal listening
+   - 1-3: No acknowledgment of others' points
+   - 4-7: Minimal listening, poor responses
    - 8-12: Basic listening skills
-   - 13-16: Good listening, builds on ideas
-   - 17-20: Exceptional listening and synthesis
+   - 13-16: Good listening, builds on ideas professionally
+   - 17-20: Exceptional listening, synthesizes and challenges appropriately
 
-5. **Collaboration Skills (0-20):**
+5. **Professional Collaboration (0-20):**
    - 0: Disruptive or no collaboration
-   - 1-3: Dismissive, doesn't collaborate
-   - 4-7: Minimal collaboration
-   - 8-12: Basic teamwork
-   - 13-16: Good collaboration
-   - 17-20: Excellent team synergy
+   - 1-3: Dismissive, doesn't collaborate professionally
+   - 4-7: Minimal professional collaboration
+   - 8-12: Basic professional teamwork
+   - 13-16: Good professional collaboration, challenges constructively
+   - 17-20: Excellent professional synergy, elevates discussion quality
 
-6. **Critical Thinking (0-20):**
+6. **Critical Thinking & Analysis (0-20):**
    - 0: No thinking demonstrated
    - 1-3: Superficial, no analysis
    - 4-7: Very basic thinking
    - 8-12: Some analysis shown
-   - 13-16: Good critical thinking
-   - 17-20: Exceptional insights
+   - 13-16: Good critical thinking, challenges weak points
+   - 17-20: Exceptional insights, calls out logical flaws professionally
 
 **CRITICAL: OVERALL SCORE IS COMPLETELY INDEPENDENT**
 - Category scores (0-20 each) evaluate specific discussion skills
@@ -2924,25 +2927,29 @@ ${discussionText}
 - 71-85: Strong participation, excellent skills
 - 86-100: Exceptional leadership and insight
 
-**CRITICAL: BE BRUTALLY HONEST**
+**CRITICAL: BE BRUTALLY HONEST ABOUT PROFESSIONAL PERFORMANCE**
 - Irrelevant word = 0-2 points maximum
 - One relevant word = 3-8 points maximum
 - One sentence with no depth = 10-20 points
 - Multiple shallow comments = 20-35 points
-- One insightful comment = 50-65 points
-- Multiple insightful comments = 65-80 points
-- Discussion leadership = 80-95 points
-- NO MERCY for poor performance
-- NO INFLATION of scores
-- ACCURATE reflection of actual contribution
+- One insightful professional comment = 50-65 points
+- Multiple insightful professional contributions = 65-80 points
+- Professional discussion leadership = 80-95 points
+- NO MERCY for poor professional performance
+- NO INFLATION of scores for effort
+- ACCURATE reflection of actual professional contribution
+- EXTRA CREDIT for handling challenging AI agents well
+- DEDUCT POINTS for failing to engage with tough questions
 
 **CRITICAL: BRUTALLY ACCURATE SCORING**
 
-**EVALUATE ACTUAL CONTRIBUTION VALUE:**
-1. **Relevance** - Is it related to the discussion topic?
-2. **Substance** - Does it add any value or insight?
-3. **Skills** - Does it show any group discussion skills?
-4. **Impact** - Does it advance the discussion at all?
+**EVALUATE ACTUAL PROFESSIONAL CONTRIBUTION VALUE:**
+1. **Relevance** - Is it related to the professional discussion topic?
+2. **Substance** - Does it add professional value or insight?
+3. **Professional Skills** - Does it show professional group discussion skills?
+4. **Impact** - Does it advance the professional discussion meaningfully?
+5. **Challenge Response** - How well did they handle tough questions from AI agents?
+6. **Professional Discourse** - Did they maintain professional standards while being direct?
 
 **STRICT SCORING RULES:**
 - Irrelevant word (no relation to topic) = 0-2 points total
@@ -3026,13 +3033,13 @@ Your entire output MUST be a single, valid JSON object without any markdown or e
           feedback: {
             type: Type.STRING,
             description:
-              "Comprehensive feedback analyzing the entire group discussion performance with specific examples.",
+              "Comprehensive feedback analyzing professional group discussion performance, noting how well they engaged with challenging AI agents and handled professional discourse.",
           },
           tips: {
             type: Type.ARRAY,
             items: { type: Type.STRING },
             description:
-              "5-7 specific improvement tips based on actual performance in the group discussion.",
+              "5-7 specific improvement tips for professional group discussions, focusing on how to better engage with challenging participants and strengthen arguments.",
           },
           // Legacy fields for backward compatibility
           score: {
@@ -3042,12 +3049,12 @@ Your entire output MUST be a single, valid JSON object without any markdown or e
           whatYouDidWell: {
             type: Type.STRING,
             description:
-              "Specific strengths demonstrated in the group discussion with examples.",
+              "Specific professional strengths demonstrated when engaging with challenging AI participants.",
           },
           areasForImprovement: {
             type: Type.STRING,
             description:
-              "Specific areas that need improvement with examples from the discussion.",
+              "Specific areas for improvement in professional discussions, especially when facing tough questions or challenges.",
           },
           personalizedTip: {
             type: Type.STRING,
@@ -3101,31 +3108,31 @@ Your entire output MUST be a single, valid JSON object without any markdown or e
           groupDiscussionAnalysis: {
             type: Type.OBJECT,
             description:
-              "Detailed analysis of the group discussion performance.",
+              "Detailed analysis of professional group discussion performance.",
             properties: {
               strongestContribution: {
                 type: Type.STRING,
                 description:
-                  "The user's strongest contribution to the discussion.",
+                  "The user's strongest professional contribution to the discussion.",
               },
               weakestContribution: {
                 type: Type.STRING,
                 description:
-                  "The user's weakest contribution to the discussion.",
+                  "The user's weakest contribution, especially when challenged by AI agents.",
               },
               bestInteraction: {
                 type: Type.STRING,
                 description:
-                  "The user's best interaction with other participants.",
+                  "The user's best professional interaction with challenging AI participants.",
               },
               missedOpportunities: {
                 type: Type.STRING,
                 description:
-                  "Key opportunities the user missed in the discussion.",
+                  "Key opportunities missed to strengthen arguments or challenge weak points.",
               },
               groupDynamics: {
                 type: Type.STRING,
-                description: "How the user affected overall group dynamics.",
+                description: "How the user handled professional discourse and challenging feedback.",
               },
             },
             required: [
