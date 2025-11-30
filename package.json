@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "dev:backend": "node backend/server.js",
-    "build": "vite build",
+    "build": "tsc && vite build",
+    "build:prod": "npm run type-check && vite build --mode production",
+    "type-check": "tsc --noEmit",
     "preview": "vite preview",
+    "analyze": "npx vite-bundle-analyzer dist/stats.html",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
   },

@@ -208,20 +208,16 @@ const AppContent: React.FC = () => {
           ? localStorage.getItem("GEMINI_API_KEY")
           : null);
 
-      // Fallback API key for development only
-      const fallbackKey = "AIzaSyBPEjh_dA8zE28fkzAm-bk7ozKADItV-yw";
-
       if ((import.meta as any)?.env?.DEV) {
         console.log("🔑 API Key Debug Info:", {
           importMetaEnvType: typeof import.meta.env,
           hasViteGeminiKey: !!(viteEnv as any).VITE_GEMINI_API_KEY,
           hasViteApiKey: !!(viteEnv as any).VITE_API_KEY,
           hasKey: !!apiKey,
-          usingFallback: !apiKey,
         });
       }
 
-      const finalKey = apiKey || fallbackKey;
+      const finalKey = apiKey;
 
       if (!finalKey || finalKey === "your_gemini_api_key_here") {
         console.error("❌ GEMINI_API_KEY not found");
@@ -938,7 +934,13 @@ const AppContent: React.FC = () => {
                               <img
                                 src={image.src}
                                 alt={image.alt}
+                                loading="lazy"
+                                decoding="async"
                                 className="h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] md:hover:scale-[1.03]"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                }}
                               />
                             </div>
                           ))}
