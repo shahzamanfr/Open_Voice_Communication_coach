@@ -34,28 +34,28 @@ const AI_AGENTS: AIAgent[] = [
   {
     name: "Sarah",
     personality: "Analytical Thinker",
-    description: "Data-driven, logical, asks probing questions",
+    description: "Brings data and research. Asks clarifying questions. Helps think through details.",
     avatar: "🧠",
     color: "bg-blue-500",
   },
   {
     name: "Marcus",
     personality: "Creative Visionary",
-    description: "Imaginative, thinks outside the box, challenges assumptions",
+    description: "Suggests new approaches. Builds on others' ideas. Thinks outside the box.",
     avatar: "💡",
     color: "bg-purple-500",
   },
   {
     name: "Elena",
     personality: "Practical Realist",
-    description: "Grounds ideas in reality, focuses on implementation",
+    description: "Focuses on implementation. Shares real-world experience. Keeps things grounded.",
     avatar: "⚖️",
     color: "bg-green-500",
   },
   {
     name: "David",
     personality: "Social Connector",
-    description: "Builds on others' ideas, facilitates discussion",
+    description: "Links different perspectives. Facilitates collaboration. Builds consensus.",
     avatar: "🤝",
     color: "bg-orange-500",
   },
@@ -140,8 +140,8 @@ const GroupDiscussionInterface: React.FC<GroupDiscussionInterfaceProps> = ({
     setLoadingState(LoadingState.GeneratingFeedback);
 
     try {
-      // Random chance for AI agents to continue talking (30% chance every 3-5 seconds)
-      const shouldTalk = Math.random() < 0.3;
+      // Random chance for AI agents to continue talking (37% chance every 3-8 seconds)
+      const shouldTalk = Math.random() < 0.37;
 
       if (shouldTalk && messages.length > 0) {
         // Get 1-2 AI agent responses
@@ -249,11 +249,14 @@ const GroupDiscussionInterface: React.FC<GroupDiscussionInterfaceProps> = ({
       return;
     }
 
+    // Store the message before clearing it
+    const messageToSend = currentMessage.trim();
+
     // Add user message
     const userMessage: GroupMessage = {
       id: `user-${Date.now()}`,
       type: "user",
-      content: currentMessage,
+      content: messageToSend,
       timestamp: new Date(),
     };
 
@@ -264,41 +267,35 @@ const GroupDiscussionInterface: React.FC<GroupDiscussionInterfaceProps> = ({
     setError(null);
 
     try {
-      // Randomly decide if AI agents should continue the conversation
-      // 70% chance of AI agents continuing, 30% chance of ending turn
-      const shouldContinue = Math.random() < 0.7;
+      // Always get at least 1 AI response to user messages
+      const numResponses = Math.random() < 0.6 ? 1 : 2;
 
-      if (shouldContinue) {
-        // Get 1-2 AI agent responses randomly
-        const numResponses = Math.random() < 0.6 ? 1 : 2;
+      for (let i = 0; i < numResponses; i++) {
+        const response = await getGroupDiscussionResponse(
+          ai,
+          discussionTopic,
+          messageToSend, // Use stored message
+          discussionRound + i,
+          false,
+          activeAgents,
+          [...messages, userMessage], // Include the new user message
+        );
 
-        for (let i = 0; i < numResponses; i++) {
-          const response = await getGroupDiscussionResponse(
-            ai,
-            discussionTopic,
-            currentMessage,
-            discussionRound + i,
-            false,
-            activeAgents,
-            messages,
-          );
+        // Add AI response
+        const aiMessage: GroupMessage = {
+          id: `agent-${Date.now()}-${i}`,
+          type: "agent",
+          content: response.content,
+          timestamp: new Date(),
+          agentName: response.agentName,
+          agentPersonality: response.agentPersonality,
+        };
 
-          // Add AI response
-          const aiMessage: GroupMessage = {
-            id: `agent-${Date.now()}-${i}`,
-            type: "agent",
-            content: response.content,
-            timestamp: new Date(),
-            agentName: response.agentName,
-            agentPersonality: response.agentPersonality,
-          };
+        setMessages((prev) => [...prev, aiMessage]);
 
-          setMessages((prev) => [...prev, aiMessage]);
-
-          // Small delay between AI responses for natural flow
-          if (i < numResponses - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
+        // Small delay between AI responses for natural flow
+        if (i < numResponses - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
 
@@ -515,16 +512,14 @@ const GroupDiscussionInterface: React.FC<GroupDiscussionInterfaceProps> = ({
                   theme === "dark" ? "text-white" : "text-black"
                 }`}
               >
-                Choose Your Discussion Topic
+                Professional Group Discussion
               </h2>
               <p
                 className={`max-w-2xl mx-auto leading-relaxed ${
                   theme === "dark" ? "text-gray-400" : "text-gray-600"
                 }`}
               >
-                Enter a topic for group discussion. You'll join 3 AI agents with
-                different personalities in a realistic, dynamic conversation
-                that will challenge and develop your discussion skills.
+                Collaborate on any topic with 3 AI agents who work like real team members - they'll build on your ideas, share insights, and help develop solutions together.
               </p>
             </div>
 
@@ -540,7 +535,7 @@ const GroupDiscussionInterface: React.FC<GroupDiscussionInterfaceProps> = ({
                   theme === "dark" ? "text-white" : "text-black"
                 }`}
               >
-                What would you like to discuss?
+                What professional topic would you like to discuss?
               </label>
               <div className="relative">
                 <textarea
@@ -681,6 +676,11 @@ const GroupDiscussionInterface: React.FC<GroupDiscussionInterfaceProps> = ({
                     <p className="text-gray-300 text-sm">{agent.description}</p>
                   </div>
                 ))}
+              </div>
+              <div className="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 rounded-lg">
+                <p className="text-blue-200 text-sm">
+                  💡 <strong>Collaborative Discussion:</strong> These agents work together like real team members - they'll build on your ideas, share insights, and help develop solutions.
+                </p>
               </div>
             </div>
 
