@@ -24,9 +24,22 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Hook for monitoring (Sentry etc.)
+    // Log error details
+    const errorDetails = {
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+    };
+
     if ((import.meta as any)?.env?.DEV) {
-      console.error("Uncaught error:", error, errorInfo);
+      console.error("Uncaught error:", errorDetails);
+    } else {
+      // In production, send to error tracking service
+      // Example: Sentry.captureException(error, { extra: errorDetails });
+      console.error('Application error occurred:', error.message);
     }
   }
 

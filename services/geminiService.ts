@@ -106,8 +106,23 @@ async function callWithRetry<T>(
                       lastErrorMessage.includes("RESOURCE_EXHAUSTED") ||
                       lastErrorMessage.includes("429");
   
+  const isQuotaExceeded = lastErrorMessage.includes("quota") ||
+                         lastErrorMessage.includes("QUOTA_EXCEEDED");
+  
+  const isNetworkError = lastErrorMessage.includes("Failed to fetch") ||
+                        lastErrorMessage.includes("NetworkError") ||
+                        lastErrorMessage.includes("ERR_NETWORK");
+  
   if (isRateLimit) {
-    throw new Error("⚠️ Server is busy due to high traffic. Too many people are using this site right now. Please try again in a few moments.");
+    throw new Error("⚠️ Server is busy due to high traffic. Please try again in a few moments.");
+  }
+  
+  if (isQuotaExceeded) {
+    throw new Error("⚠️ API quota exceeded. Please try again later or contact support.");
+  }
+  
+  if (isNetworkError) {
+    throw new Error("⚠️ Network connection issue. Please check your internet and try again.");
   }
   
   throw lastError ?? new Error("Unknown error calling Gemini API");
